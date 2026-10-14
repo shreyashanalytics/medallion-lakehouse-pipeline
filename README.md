@@ -112,35 +112,3 @@ select p.category, round(sum(f.recognized_revenue), 2) as revenue
 from gold.fact_sales f join gold.dim_product p using (product_key)
 group by 1 order by 2 desc;
 ```
-
-## Troubleshooting
-
-- **Permission errors on Linux:** set `AIRFLOW_UID=$(id -u)` in `.env`, then `docker compose down && up`.
-- **Spark OOM:** raise Docker memory or lower `SYNTHETIC_ROWS` in `docker-compose.yml`.
-- **LocalStack image:** pinned to 3.8.1 (newer tags need an auth token). MinIO is a drop-in alternative.
-- **Great Expectations instead of Soda:** swap `quality/run_soda.py`; the DAG task contract (non-zero exit = fail) is unchanged.
-
-## Roadmap ideas
-
-Incremental dbt models, Iceberg/Delta tables, OpenLineage + Marquez, Metabase/Superset dashboard, Terraform to real AWS.
-
----
-
-## How to showcase this project
-
-**GitHub**
-1. Repo name: `medallion-lakehouse-pipeline`; add topics: `data-engineering airflow pyspark dbt duckdb soda localstack`.
-2. Put the architecture diagram at the top of the README and add 3 screenshots: Airflow DAG graph (green), Soda output, a Gold query result.
-3. Keep CI green, commit in small meaningful steps (conventional commits), pin the repo on your profile.
-4. Add a 2-minute Loom/GIF of `docker compose up` through a successful run.
-
-**LinkedIn post template**
-> I built an end-to-end Medallion Lakehouse pipeline that runs entirely free on my laptop.
-> API -> S3 (LocalStack) -> PySpark -> Soda data contracts -> dbt star schema in DuckDB, orchestrated by Airflow with retries and SLA alerts.
-> Highlights: quarantine for bad records, idempotent reruns, contract gate before Gold, CI with lint + tests.
-> What I learned: <1-2 real lessons>. Repo + diagram: <link>. #dataengineering #airflow #dbt #pyspark
-
-**Resume bullets**
-- Built a containerised Medallion lakehouse (Airflow, PySpark, dbt-duckdb, LocalStack) processing 50K+ daily transactions with idempotent reruns.
-- Implemented Soda Core data contracts gating Silver->Gold promotion, plus quarantine of invalid records.
-- Modelled a star schema (1 fact, 3 dimensions) with dbt tests (uniqueness, referential integrity); CI via GitHub Actions.
