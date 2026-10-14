@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: dim_date
+    columns:
+      - name: date_key
+        tests: [unique, not_null]
+
+  - name: dim_customer
+    columns:
+      - name: customer_key
+        tests: [unique, not_null]
+      - name: customer_id
+        tests: [unique, not_null]
+
+  - name: dim_product
+    columns:
+      - name: product_key
+        tests: [unique, not_null]
+      - name: product_id
+        tests: [unique, not_null]
+
+  - name: fact_sales
+    description: Star-schema fact table, grain = one row per transaction.
+    columns:
+      - name: transaction_id
+        tests: [unique, not_null]
+      - name: date_key
+        tests:
+          - not_null
+          - relationships: {to: ref('dim_date'), field: date_key}
+      - name: customer_key
+        tests:
+          - not_null
+          - relationships: {to: ref('dim_customer'), field: customer_key}
+      - name: product_key
+        tests:
+          - not_null
+          - relationships: {to: ref('dim_product'), field: product_key}
+      - name: recognized_revenue
+        description: Net amount for completed orders only; 0 otherwise.

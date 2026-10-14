@@ -1,0 +1,16 @@
+lakehouse:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('DUCKDB_PATH', '/opt/airflow/warehouse/lakehouse.duckdb') }}"
+      threads: 4
+      extensions:
+        - httpfs
+      settings:
+        s3_endpoint: "{{ env_var('DUCKDB_S3_ENDPOINT', 'localstack:4566') }}"
+        s3_access_key_id: "{{ env_var('AWS_ACCESS_KEY_ID', 'test') }}"
+        s3_secret_access_key: "{{ env_var('AWS_SECRET_ACCESS_KEY', 'test') }}"
+        s3_region: "{{ env_var('AWS_DEFAULT_REGION', 'us-east-1') }}"
+        s3_url_style: path
+        s3_use_ssl: false

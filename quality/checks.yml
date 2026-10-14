@@ -1,0 +1,39 @@
+# Soda Core data contract for the Silver layer.
+# The Airflow DAG stops here if any check FAILS, so bad data never reaches Gold.
+
+checks for silver_transactions:
+  - schema:
+      name: Required columns are present
+      fail:
+        when required column missing:
+          - transaction_id
+          - customer_id
+          - product_id
+          - quantity
+          - unit_price
+          - discount_pct
+          - status
+          - transaction_ts
+          - line_amount
+  - row_count > 0
+  - missing_count(transaction_id) = 0
+  - duplicate_count(transaction_id) = 0
+  - missing_count(customer_id) = 0
+  - missing_count(product_id) = 0
+  - min(quantity) >= 1
+  - min(unit_price) >= 0
+  - max(discount_pct) <= 100
+  - invalid_count(status) = 0:
+      valid values: [completed, pending, cancelled, refunded]
+
+checks for silver_customers:
+  - row_count > 0
+  - missing_count(customer_id) = 0
+  - duplicate_count(customer_id) = 0
+  - missing_count(email) = 0
+
+checks for silver_products:
+  - row_count > 0
+  - missing_count(product_id) = 0
+  - duplicate_count(product_id) = 0
+  - min(price) >= 0

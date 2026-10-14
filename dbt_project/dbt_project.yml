@@ -1,0 +1,20 @@
+name: lakehouse
+version: "1.0.0"
+config-version: 2
+profile: lakehouse
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+
+vars:
+  silver_root: "{{ env_var('SILVER_ROOT', 's3://lakehouse/silver') }}"
+
+models:
+  lakehouse:
+    silver:
+      +materialized: table
+      +schema: silver
+    gold:
+      +materialized: table
+      +schema: gold
